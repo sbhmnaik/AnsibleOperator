@@ -2,4 +2,4 @@
 - version: v1alpha1
   group: postgresql.operator.com
   kind: PostgreSQL
-  role: postgresql
+  role: /opt/ansible/roles/postgresql
