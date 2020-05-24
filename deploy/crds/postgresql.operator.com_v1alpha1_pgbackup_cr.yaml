@@ -1,0 +1,14 @@
+apiVersion: postgresql.operator.com/v1alpha1
+kind: PgBackup
+metadata:
+  name: postgres-pgbackup
+spec:
+  image: applicadb/postgres-python
+  serviceIp: 
+  dbName: books;students;employes
+  postgresDb: postgresdb
+  postgresUser: postgresadmin
+  postgresPassword: admin123
+  backupFile: data.sql
+  schedule: "*/8 * * * * "
+
