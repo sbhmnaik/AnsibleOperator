@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: pgbackup-cm
+  labels:
+    app: postgres
+data:
+  BUCKET_NAME: <Bucket Name>
+  ENDPOINT: <END Point>
+  API_KEY: <API KEY>
+  AUTH_ENDPOINT: <AUTH ENDPOINT>
+  RESOURCE_CRN: <RESOURCE CRN>
+
