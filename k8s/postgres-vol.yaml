@@ -2,7 +2,6 @@ kind: PersistentVolume
 apiVersion: v1
 metadata:
   name: postgresql-pv-vol1
-  namespace: psql
   labels:
     type: local
     app: postgresql
@@ -20,7 +19,6 @@ kind: PersistentVolumeClaim
 apiVersion: v1
 metadata:
   name: postgresql-pvc-vol1
-  namespace: psql
   labels:
     type: local
     app: postgresql
