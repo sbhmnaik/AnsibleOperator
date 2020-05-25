@@ -2,10 +2,10 @@
 - name: start postgres
   k8s:
     definition:
-      kind: Deployment
-      apiVersion: v1
+      kind: StatefulSet
+      apiVersion: apps/v1
       metadata:
-        name: '{{ meta.name }}-postgres'
+        name: 'postgresql-deployment'
         namespace: '{{ meta.namespace }}'
       spec:
         replicas: "{{size}}"
@@ -19,16 +19,12 @@
           spec:
             containers:
             - name: postgres
-              image: "postgres:10.4"
+              image: "{{image}}"
               ports:
               - containerPort: 5432
-              env:
-              - name: POSTGRES_DB
-                value: "{{ POSTGRES_DB }}"
-              - name: POSTGRES_USER
-                value: "{{ POSTGRES_USER }}"
-              - name: POSTGRES_PASSWORD
-                value: "{{ POSTGRES_PASSWORD }}"
+              envFrom:
+              - configMapRef:
+                  name: postgresql-cm
               volumeMounts:
               - name: postgresql-data
                 mountPath: "/var/lib/postgresql/data"
@@ -36,7 +32,7 @@
             - name: postgresql-data
               persistentVolumeClaim:
                 claimName: postgresql-pvc-vol1
-- name: Create the  service
+- name: Create the service
   k8s:
     definition:
       apiVersion: v1
