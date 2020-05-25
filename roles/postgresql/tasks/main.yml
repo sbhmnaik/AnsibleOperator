@@ -1,53 +1,56 @@
 ---
 - name: start postgres
-k8s:
-  definition:
-    kind: StatefulSet
-    apiVersion: apps/v1
-    metadata:
-      name: 'postgresql-deployment'
-      namespace: '{{ meta.namespace }}'
-    spec:
-      replicas: "{{size}}"
-      selector:
-        matchLabels:
-          app: postgres
-      template:
-        metadata:
-          labels:
+  k8s:
+    definition:
+      kind: Deployment
+      apiVersion: v1
+      metadata:
+        name: '{{ meta.name }}-postgres'
+        namespace: '{{ meta.namespace }}'
+      spec:
+        replicas: "{{size}}"
+        selector:
+          matchLabels:
             app: postgres
-        spec:
-          containers:
-          - name: postgres
-            image: "{{image}}"
-            ports:
-            - containerPort: 5432
-            envFrom:
-              - configMapRef:
-                  name: postgresql-cm
-            volumeMounts:
+        template:
+          metadata:
+            labels:
+              app: postgres
+          spec:
+            containers:
+            - name: postgres
+              image: "postgres:10.4"
+              ports:
+              - containerPort: 5432
+              env:
+              - name: POSTGRES_DB
+                value: "{{ POSTGRES_DB }}"
+              - name: POSTGRES_USER
+                value: "{{ POSTGRES_USER }}"
+              - name: POSTGRES_PASSWORD
+                value: "{{ POSTGRES_PASSWORD }}"
+              volumeMounts:
+              - name: postgresql-data
+                mountPath: "/var/lib/postgresql/data"
+            volumes:
             - name: postgresql-data
-              mountPath: "/var/lib/postgresql/data"
-          volumes:
-          - name: postgresql-data
-            persistentVolumeClaim:
-              claimName: postgresql-pvc-vol1
-- name: Create the service
-k8s:
-  definition:
-    apiVersion: v1
-    kind: Service
-    metadata:
-      name: service
-      namespace: '{{ meta.namespace }}'
-      labels:
-        app: postgres
-    spec:
-      ports:
-      - name: database
-        port: 5432
-        protocol: TCP
-        targetPort: 5432
-      selector:
-        app: postgres
-
+              persistentVolumeClaim:
+                claimName: postgresql-pvc-vol1
+- name: Create the  service
+  k8s:
+    definition:
+      apiVersion: v1
+      kind: Service
+      metadata:
+        name: service
+        namespace: '{{ meta.namespace }}'
+        labels:
+          app: postgres
+      spec:
+        ports:
+        - name: database
+          port: 5432
+          protocol: TCP
+          targetPort: 5432
+        selector:
+          app: postgres
